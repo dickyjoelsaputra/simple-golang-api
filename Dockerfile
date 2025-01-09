@@ -1,20 +1,22 @@
+# Stage 1: Builder
 FROM golang:latest AS builder
 
-# Menyalin go.mod dan go.sum terlebih dahulu untuk caching dependensi
+# Set working directory
+WORKDIR /app
+
+# Copy go mod and sum files
 COPY go.mod go.sum ./
 
-# Mengunduh dependensi
+# Download dependencies
 RUN go mod download
 
-# Menyalin seluruh file proyek ke dalam container
+# Copy the source code
 COPY . .
 
-# Membuild aplikasi
-RUN go build -o main ./main.go
-
+# Build the application
+RUN go build -o main .
 
 FROM debian:bookworm-slim
-
 
 RUN apt-get update && \
     apt-get install -y git ca-certificates tzdata && \
